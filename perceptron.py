@@ -8,6 +8,7 @@
 
 # Perceptron implementation
 import util
+import random
 PRINT = True
 
 
@@ -21,9 +22,9 @@ class PerceptronClassifier:
   WIDTH = 0
   HEIGHT = 0
 
-  def __init__( self, legalLabels, max_iterations):
+  def __init__( self, legalLabels, max_iterations, size):
     self.legalLabels = legalLabels
-
+    self.size = size
     if len(legalLabels) == 10:
       self.WIDTH = 28
       self.HEIGHT = 28
@@ -87,24 +88,35 @@ class PerceptronClassifier:
           key = (j,k)
           self.weights[i][key] = 0
 
+
+    #randomized subset of data
+    rand_data = []
+    rand_labels = []
+
+    for i in sorted(random.sample(xrange(len(trainingLabels)), self.size)):
+      rand_data.append(trainingData[i])
+      rand_labels.append(trainingLabels[i])
+
+
+
     self.features = trainingData[0].keys() # could be useful later
     # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
     # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
     for iteration in range(self.max_iterations):
       print "Starting iteration ", iteration, "..."
-      for i in range(len(trainingData)):
+      for i in range(len(rand_data)):
           "*** YOUR CODE HERE ***"
           '''
           if (len(self.legalLabels) == 10):
             print "Set number Weights"   
           '''
-          val =  self.calcOutput(trainingData[i])
+          val =  self.calcOutput(rand_data[i])
           #print "Predicted value " + str(val)
           #print "Actual Value " + str(trainingLabels[i])
 
-          if(val != trainingLabels[i]):
-            self.shiftWeights(val, trainingLabels[i], trainingData[i]);
+          if(val != rand_labels[i]):
+            self.shiftWeights(val, rand_labels[i], rand_data[i]);
             #self.shiftWeights()
 
           #util.raiseNotDefined()

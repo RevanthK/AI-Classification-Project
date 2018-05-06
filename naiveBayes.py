@@ -88,7 +88,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     rand_labels = []
 
     for i in sorted(random.sample(xrange(len(trainingLabels)), self.size)):
-      rand_data.append(trainingData[i] )
+      rand_data.append(trainingData[i])
       rand_labels.append(trainingLabels[i])
 
 

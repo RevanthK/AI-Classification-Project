@@ -248,7 +248,7 @@ def readCommand( argv ):
     else:
         print "using smoothing parameter k=%f for naivebayes" %  options.smoothing
   elif(options.classifier == "perceptron"):
-    classifier = perceptron.PerceptronClassifier(legalLabels,options.iterations)
+    classifier = perceptron.PerceptronClassifier(legalLabels,options.iterations,options.random)
   elif(options.classifier == "mira"):
     classifier = mira.MiraClassifier(legalLabels, options.iterations)
     if (options.autotune):

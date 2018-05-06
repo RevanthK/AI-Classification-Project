@@ -91,6 +91,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
       rand_data.append(trainingData[i])
       rand_labels.append(trainingLabels[i])
 
+    self.priors = {}
+    self.featureProb = []
 
     for i in range(len(self.legalLabels)):
         self.priors[i] = 0;

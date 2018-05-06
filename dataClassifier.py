@@ -16,6 +16,7 @@ import mira
 import samples
 import sys
 import util
+import time
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -316,7 +317,10 @@ def runClassifier(args, options):
   
   # Conduct training and testing
   print "Training..."
+  start = time.time()
   classifier.train(trainingData, trainingLabels, validationData, validationLabels)
+  end = time.time()
+  print("time elapsed: " + str(end - start))
   print "Validating..."
   guesses = classifier.classify(validationData)
   correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)

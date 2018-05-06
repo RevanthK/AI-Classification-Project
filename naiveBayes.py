@@ -9,6 +9,7 @@
 import util
 import classificationMethod
 import math
+import time
 import numpy as np
 
 class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
@@ -76,6 +77,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
 
     "*** YOUR CODE HERE ***"
+
+
     self.features = trainingData[0].keys() # could be useful later
     # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
     # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
@@ -109,10 +112,10 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
         self.priors[i] = float(self.priors[i])/float(total)
         #print self.featureProb[i]
-        print self.featureProb[i]
+        #print self.featureProb[i]
 
-
-    print self.priors
+    
+    #print self.priors
 
 
 

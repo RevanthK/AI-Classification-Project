@@ -11,6 +11,7 @@ import classificationMethod
 import math
 import time
 import numpy as np
+import random
 
 class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
   """
@@ -23,13 +24,14 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
   HEIGHT = 0
 
 
-  def __init__(self, legalLabels):
+  def __init__(self, legalLabels, size):
     self.legalLabels = legalLabels
     self.type = "naivebayes"
     self.k = 1 # this is the smoothing parameter, ** use it in your train method **
     self.automaticTuning = False # Look at this flag to decide whether to choose k automatically ** use this in your train method **    
     self.priors = {}
     self.featureProb = []
+    self.size = size
 
     #self.featureProb = util.Counter()
     if len(legalLabels) == 10:
@@ -79,9 +81,17 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     "*** YOUR CODE HERE ***"
 
 
-    self.features = trainingData[0].keys() # could be useful later
+    #self.features = trainingData[0].keys() # could be useful later
     # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
     # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
+    rand_data = []
+    rand_labels = []
+
+    for i in sorted(random.sample(xrange(len(trainingLabels)), self.size)):
+      rand_data.append(trainingData[i] )
+      rand_labels.append(trainingLabels[i])
+
+
     for i in range(len(self.legalLabels)):
         self.priors[i] = 0;
         dictn = {}
@@ -95,13 +105,13 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
 
 
-    for i in range(len(trainingLabels)):
+    for i in range(len(rand_labels)):
         total += 1
-        self.priors[trainingLabels[i]] = self.priors[trainingLabels[i]] + 1;  
+        self.priors[rand_labels[i]] = self.priors[rand_labels[i]] + 1;  
         for j in range(self.WIDTH):
           for k in range(self.HEIGHT):
-            if trainingData[i][(j,k)] == 1:
-              self.featureProb[trainingLabels[i]][(j,k)] += 1
+            if rand_data[i][(j,k)] == 1:
+              self.featureProb[rand_labels[i]][(j,k)] += 1
 
     for i in range(len(self.legalLabels)):
         #print str(self.priors[legalLabels[i]])

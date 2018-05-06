@@ -17,6 +17,7 @@ import samples
 import sys
 import util
 import time
+import numpy as np
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -111,6 +112,7 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
   (and you can modify the signature if you want).
   """
   
+  '''
   # Put any code here...
   # Example of use:
   for i in range(len(guesses)):
@@ -123,7 +125,7 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
           print "Image: "
           print rawTestData[i]
           break
-
+'''
 
 ## =====================
 ## You don't have to modify any code below.
@@ -178,6 +180,8 @@ def readCommand( argv ):
   parser.add_option('-a', '--autotune', help=default("Whether to automatically tune hyperparameters"), default=False, action="store_true")
   parser.add_option('-i', '--iterations', help=default("Maximum iterations to run training"), default=3, type="int")
   parser.add_option('-s', '--test', help=default("Amount of test data to use"), default=TEST_SET_SIZE, type="int")
+
+  parser.add_option('-r', '--random', help=default('The size of the randomized training set'), default=100, type="int")
 
   options, otherjunk = parser.parse_args(argv)
   if len(otherjunk) != 0: raise Exception('Command line input not understood: ' + str(otherjunk))
@@ -236,7 +240,7 @@ def readCommand( argv ):
   if(options.classifier == "mostFrequent"):
     classifier = mostFrequent.MostFrequentClassifier(legalLabels)
   elif(options.classifier == "naiveBayes" or options.classifier == "nb"):
-    classifier = naiveBayes.NaiveBayesClassifier(legalLabels)
+    classifier = naiveBayes.NaiveBayesClassifier(legalLabels, options.random)
     classifier.setSmoothing(options.smoothing)
     if (options.autotune):
         print "using automatic tuning for naivebayes"
@@ -316,21 +320,32 @@ def runClassifier(args, options):
   testData = map(featureFunction, rawTestData)
   
   # Conduct training and testing
-  print "Training..."
-  start = time.time()
-  classifier.train(trainingData, trainingLabels, validationData, validationLabels)
-  end = time.time()
-  print("time elapsed: " + str(end - start))
-  print "Validating..."
-  guesses = classifier.classify(validationData)
-  correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
-  print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
-  print "Testing..."
-  guesses = classifier.classify(testData)
-  correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
-  print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-  analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
-  
+
+  accuracy = []
+  timeData = []
+
+  for i in range(5):
+    print "Training on %d datums..." % (options.random)
+    start = time.time()
+    classifier.train(trainingData, trainingLabels, validationData, validationLabels)
+    end = time.time()
+    print("time elapsed: " + str(end - start))
+    timeData.append(end - start)
+    print "Validating..."
+    guesses = classifier.classify(validationData)
+    correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
+    print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
+    print "Testing..."
+    guesses = classifier.classify(testData)
+    correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
+    print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
+    accuracy.append(float(correct) / float(len(testLabels)))
+    analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
+   
+  print "Mean accuracy: " + str(100*(np.sum(accuracy)/len(accuracy)))
+  print "Std accuracy: " + str(np.std(accuracy))
+  print "Mean Time: " + str(np.sum(timeData)/len(timeData))
+
   # do odds ratio computation if specified at command line
   if((options.odds) & (options.classifier == "naiveBayes" or (options.classifier == "nb")) ):
     label1, label2 = options.label1, options.label2

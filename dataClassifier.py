@@ -12,12 +12,12 @@
 import mostFrequent
 import naiveBayes
 import perceptron
-import mira
 import samples
 import sys
 import util
 import time
 import numpy as np
+import random
 
 TEST_SET_SIZE = 100
 DIGIT_DATUM_WIDTH=28
@@ -337,7 +337,21 @@ def runClassifier(args, options):
     print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
     print "Testing..."
     guesses = classifier.classify(testData)
+
+    for i in sorted(random.sample(xrange(len(testLabels)), 1)):
+      prediction = guesses[i]
+      truth = testLabels[i]
+      print "==================================="
+      print "Predicted %d; truth is %d" % (prediction, truth)
+      print "Image: "
+      print rawTestData[i]
+
+
+
     correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
+
+
+
     print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
     accuracy.append(float(correct) / float(len(testLabels)))
     analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)

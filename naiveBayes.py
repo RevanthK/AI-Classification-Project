@@ -138,6 +138,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     
     You shouldn't modify this method.
     """
+  
+
     guesses = []
     self.posteriors = [] # Log posteriors are stored for later data analysis (autograder).
     for datum in testData:
